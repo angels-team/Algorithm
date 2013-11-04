@@ -4,58 +4,38 @@ readl = lambda:sys.stdin.readline().strip()
 
 INF = 9999999999999
 
-def find1(nodes):
-    visited = [False] * len(nodes)
-    visited[0] = True
-    stack = []
-    min = INF
-    weight = 1
-    
-    stack.append(0)
+def minRoute(adj, nodes):
+    minWeight = [INF for _ in range(nodes)]
+    minWeight[0] = 1
 
-    while(len(stack) > 0):
-        curNode = stack[0]
-        for nextNode in range(len(nodes)):
-            if not visited[nextNode] and nodes[curNode][nextNode] :
-                candidate = weight * nodes[curNode][nextNode]
-                
-                if weight > min : break
+    for cv in adj:
+        for v in adj[cv]:
+            weight = minWeight[cv] * adj[cv][v]
+            if minWeight[v] > weight :
+                minWeight[v] = weight
 
-                visited[nextNode] = True
-                stack.insert(0, nextNode)
-                weight = candidate
-                curNode = nextNode
+    return minWeight[nodes-1]
 
-def min(num1, num2):
-    if num1 < num2 : return num1
-    else : return num2
-
-def find(node, weight) :
-    visited[node] = True
-    
-    if node == len(nodes)-1 : 
-        result = min(minWeight, weight)
-        visited[node] = False
-        return result
-    
-    for nextNode in range(len(nodes)):
-        if not visited[nextNode] and nodes[node][nextNode] :
-            temp = weight * nodes[node][nextNode]
-            visited[nextNode] = True
-            result = find(nextNode, temp)
-
-testCases = int(readl())
-
-for _ in range(testCases) :
+for _ in range(int(readl())) :
     nodeCount = map(int, readl().split())
 
-    nodes = [[0] * nodeCount[0] for _ in range(nodeCount[0])]
+    adj = {}
+    nodes = set()
     for _ in range(nodeCount[1]):
         node = readl().split()
         n1 = int(node[0])
         n2 = int(node[1])
         noise = float(node[2])
+        nodes.add(n1)
+        nodes.add(n2)
 
-        if not nodes[n1][n2] or (nodes[n1][n2] and nodes[n1][n2] > noise) : 
-            nodes[n1][n2] = noise
-            nodes[n2][n1] = noise
+        if n1 in adj:
+            adj[n1][n2] = noise
+        else :
+            adj[n1] = {n2:noise}
+        if n2 in adj:
+            adj[n2][n1] = noise
+        else :
+            adj[n2] = {n1:noise}
+
+    print("%.10f" % minRoute(adj, len(nodes)))
