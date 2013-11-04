@@ -1,0 +1,23 @@
+import sys
+
+class concert:
+    n = 0
+    vs = 0
+    vm = 0
+    volumes = []
+
+    def __init__(self, n, vs, vm, volumes):
+        self.n = n
+        self.vs = vs
+        self.vm = vm
+        self.volumes = volumes
+
+read = lambda:sys.stdin.readline().strip()
+
+for _ in range(int(read())):
+    row = map(int, read().split())
+    n = row[0]
+    vs = row[1]
+    vm = row[2]
+
+    volumes = map(int, read().split())
