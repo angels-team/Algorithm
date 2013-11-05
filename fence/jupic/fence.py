@@ -26,18 +26,20 @@ def fence(left, right) :
 	lo = mid
 	hi = mid+1
 	
-	bothS = 0
-	while lo >= left and hi <= right :
-		minHeight = boards[lo]
-		if minHeight <= board[hi] :
+	height = min(boards[lo], boards[hi])
+	square = max(max(leftS, rightS), height*2)
+
+	while lo > left or hi < right :
+		if (hi < right) and (lo == left or height < boards[hi+1]) :
 			hi = hi + 1
+			height = min(height, boards[hi])
 		else :
 			lo = lo - 1
+			height = min(height, boards[lo])
 			
-		bothS = max(bothS, minHeight * (hi - lo))
-	
-	result = max(leftS, max(rightS, bothS))
-	return result
+		square = max(square, height * (hi - lo + 1))
+		
+	return square
 		
 		
 		
@@ -45,4 +47,4 @@ for _ in range(int(read())):
 	boardCount = int(read())
 	boards = map(int, read().split());
 	
-	fence(0, boardCount-1)
+	print(fence(0, boardCount-1))

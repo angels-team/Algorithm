@@ -1,51 +1,49 @@
 import sys
 
-INF = -987654321
-
 def max(num1, num2) :
     if num1 > num2 : return num1
     else : return num2
 
 class Concert:
     n = 0
-    vs = 0
     vm = 0
     volumes = []
+    table = None
 
     def __init__(self, n, vs, vm, volumes):
         self.n = n
-        self.vs = vs
         self.vm = vm
         self.volumes = volumes
+        self.volumes.insert(0, vs)
+        self.table = [[-1]*(vm+1) for _ in range(n+1)]
     
     def maxVol(self) :
-        return self.maxVolume(len(self.volumes)-1)
+        return self.maxVolume(0, self.volumes[0])
         
-    def maxVolume (self, turn) :
-        result = 0
-        t1 = 0 
-        t2 = 0
+    def maxVolume (self,turn, volume) :
+        if self.table[turn][volume] > 0:
+            return self.table[turn][volume]
 
-        if turn == 0 :
-           t1 = self.vs - self.volumes[0]
-           t2 = self.vs - self.volumes[0]
+        nVol = volume - self.volumes[turn+1]
+        pVol = volume + self.volumes[turn+1]
 
-           if self.isAvail(t1) and self.isAvail(t2):
-               return max(t1, t2)
-           elif not self.isAvail(t1) and self.isAvail(t2): return t2
-           elif not self.isAvail(t2) and self.isAvail(t1): return t1
-           else : return INF
-       
-        r1 = self.maxVolume(turn-1) - self.volumes[turn]
-        r2 = self.maxVolume(turn-1) + self.volumes[turn]
+        if turn == self.n - 1:
+            if not self.isAvail(nVol) : nVol = -1
+            if not self.isAvail(pVol) : pVol = -1
 
-        if self.isAvail(r1) and self.isAvail(r2):
-           result = max(r1, r2)
-        elif not self.isAvail(t1) and self.isAvail(t2): result = t2
-        elif not self.isAvail(t2) and self.isAvail(t1): result = t1
-        else : result = INF
-       
-        return result
+            return max(nVol, pVol)
+        else :
+            left = -1
+            right = -1
+
+            if self.isAvail(nVol) :
+                left = self.maxVolume(turn+1, nVol)
+                self.table[turn+1][nVol] = left
+            if self.isAvail(pVol) :
+                right = self.maxVolume(turn+1, pVol)
+                self.table[turn+1][pVol] = right
+
+            return max(left, right)
 
     def isAvail(self, volume):
         return volume >=0 and volume <= self.vm
